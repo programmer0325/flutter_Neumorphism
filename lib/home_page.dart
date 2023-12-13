@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_snake_navigationbar/flutter_snake_navigationbar.dart';
+import 'package:flutter/material.dart' hide BoxDecoration, BoxShadow;
+import 'package:flutter_inset_box_shadow/flutter_inset_box_shadow.dart';
+
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -9,42 +10,64 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedItemPosition = 0;
+  bool isPressed = false;
+
   @override
   Widget build(BuildContext context) {
+    Offset distance = isPressed ? const Offset(10, 10) : const Offset(10, -5);
+    double blur = isPressed ? 5.0 : 15.0;
+    double depth = isPressed ? -10.0 : 10.0;
     return Scaffold(
-       backgroundColor: Colors.black,
-      bottomNavigationBar: SnakeNavigationBar.color(
-        backgroundColor: Colors.black,
-        behaviour: SnakeBarBehaviour.floating,
-        snakeShape: SnakeShape.circle,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(25),),
-        ),
-        padding: const EdgeInsets.all(12),
+        body: Center(
+            child: GestureDetector(
+              onTap: () => setState(() =>  isPressed = !isPressed),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 600),
+                child: Container(
+                  width: 250,
+                  height: 250,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.0),
+                    color: Colors.grey[300],
+                    boxShadow: [
+                      BoxShadow(
+                        blurRadius: blur,
+                        offset: -distance,
+                        color: Colors.black.withOpacity(0.5),
+                        inset: true,
+                      ),
+                      BoxShadow(
+                        blurRadius: blur,
+                        offset: -distance,
+                        color: Colors.grey[400]!,
+                        inset: true,
+                      ),
+                      if(depth >= 0)
+                        BoxShadow(
+                          blurRadius: blur,
+                          offset: -distance,
+                          color: Colors.black.withOpacity(0.5),
+                        ),
+                      if(depth >= 0)
+                        BoxShadow(
+                          blurRadius: blur,
+                          offset: -distance,
+                          color: Colors.black.withOpacity(0.5),
+                        ),
+                    ],
+                  ),
+                  child: Center(
+                    child: Icon(Icons.apple_rounded,
+                      size: 120,
+                      color: isPressed ? Colors.black : Colors.grey[500],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          
 
-        ///configuration for SnakeNavigationBar.color
-        snakeViewColor: Colors.indigo,
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.grey,
-
-        ///configuration for SnakeNavigationBar.gradient
-        //snakeViewGradient: selectedGradient,
-        //selectedItemGradient: snakeShape == SnakeShape.indicator ? selectedGradient : null,
-        //unselectedItemGradient: unselectedGradient,
-
-        showUnselectedLabels: true,
-        showSelectedLabels: true,
-
-        currentIndex: _selectedItemPosition,
-        onTap: (index) => setState(() => _selectedItemPosition = index),
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'home'),
-          BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'chat'),
-          BottomNavigationBarItem(icon: Icon(Icons.mic), label: 'mic'),
-          BottomNavigationBarItem(icon: Icon(Icons.bookmark), label: 'bookmark'),
-        ],
-      ),
+        )
     );
   }
 }
